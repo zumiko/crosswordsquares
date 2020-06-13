@@ -12,14 +12,13 @@ class Grid:
         self.array[:] =  None
         self.done = False
         self.row = 0 
+        self.lswords = []
 
-
-    def starts_with(self,letter): 
+    def make_list(self): 
         for line in file: 
             word = line.strip()
-            for i in range(len(word)): 
-                if letter == word[0]: 
-                    print(word)
+            if len(word) == self.length: 
+                self.lswords.append(word)
 
     def check_match(self, letter, spot): 
         possible = []
@@ -30,20 +29,15 @@ class Grid:
                     possible.append(word)
         print(possible)
 
-    def starts_with2(self, string): 
+    def starts_with(self, string): 
         possible = []
-        for line in file: 
-            word = line.strip()
-            good = True
-            if len(word) >= len(string) and check_len(word,self.length): 
-                for i in range(len(word)):
-                    for j in range(len(string)):
-                        if string[j] != word[j]: 
-                            good = False 
-                if good == True: 
-                    possible.append(word)
-                good = True 
-        print(possible)
+        for w in self.lswords: 
+            good = True  
+            for j in range(len(string)):  #goes through pieces of string
+                if string[j] != w[j]: 
+                    good = False 
+            if good == True: 
+                possible.append(w)
         return possible
 
     def check_len(self, word): 
@@ -53,12 +47,8 @@ class Grid:
             return False
 
     def choose_random_word(self):   #takes list of possible words and tries them out to initialize feed whole list of words
-        ls = []
-        for line in file: 
-            word = line.strip()
-            if self.check_len(word) == True: 
-                ls.append(word) 
-        start = random.choice(ls)
+        start = random.choice(self.lswords)
+        print(start)
         return start
 
     def add_to_array(self, word, rownum): #this adds the word to the array based on the rownumber 
@@ -67,6 +57,7 @@ class Grid:
 
     def print_array(self): 
         print(self.array.decode('utf8'))
+        print(self.row)
 
 
     def make_puzzle(self): 
@@ -78,29 +69,36 @@ class Grid:
     def is_possible(self): # checks if we are good so far
         i = 0 
         begin = []
-        bad = False
+        possible = True
         while i < self.length: #need to sum the letter spots, so outer loop for column number and inner loop up to row 
             j = 0 
             word = ''
             while j < self.row: 
-                word += self.array[i, j].decode('utf8')
-            print(word)
-            checklist = self.starts_with2(word)
-            if len(checklist) <= 5: 
-                bad = True
-        return bad
+                word += self.array[j, i].decode('utf8')
+                print(word)
+                checklist = self.starts_with(word)
+                print(checklist)
+                if len(checklist) <= 2: 
+                    possible = False
+                j+= 1
+            i+= 1
+        return possible
 
 
     def make_puzzle2(self): 
-        if self.row < self.length: 
-            neword = self.choose_random_word()
-            self.add_to_array(neword)
+        if self.row == self.length: 
+            self.print_array()
 
+        else: 
+            neword = self.choose_random_word() 
+            self.add_to_array(str(neword), self.row)
+            self.print_array()
             if self.is_possible() == True: 
                 self.row += 1
-                self.print_array()
+                print(self.row)
 
             self.make_puzzle2()
+
             
             
 
@@ -109,8 +107,9 @@ class Grid:
 
 
 
-g1 = Grid(4)
+g1 = Grid(2)
 #g1.choose_random_word()
+g1.make_list()
 g1.make_puzzle2()
 
 
