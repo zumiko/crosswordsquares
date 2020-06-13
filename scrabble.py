@@ -30,12 +30,12 @@ class Grid:
                     possible.append(word)
         print(possible)
 
-    def starts_with2(self, string,length): 
+    def starts_with2(self, string): 
         possible = []
         for line in file: 
             word = line.strip()
             good = True
-            if len(word) >= len(string) and check_len(word,length): 
+            if len(word) >= len(string) and check_len(word,self.length): 
                 for i in range(len(word)):
                     for j in range(len(string)):
                         if string[j] != word[j]: 
@@ -75,24 +75,31 @@ class Grid:
         self.add_to_array(start, 0)
         self.print_array()
 
-    def is_possible(self): 
+    def is_possible(self): # checks if we are good so far
         i = 0 
+        begin = []
+        bad = False
         while i < self.length: #need to sum the letter spots, so outer loop for column number and inner loop up to row 
-
-
-        return True 
-
-        return False 
+            j = 0 
+            word = ''
+            while j < self.row: 
+                word += self.array[i, j].decode('utf8')
+            print(word)
+            checklist = self.starts_with2(word)
+            if len(checklist) <= 5: 
+                bad = True
+        return bad
 
 
     def make_puzzle2(self): 
-        if self.done == False: 
+        if self.row < self.length: 
             neword = self.choose_random_word()
-            print(neword)
-            if self.is_possible(neword): 
-                self.add_to_array(neword)
+            self.add_to_array(neword)
+
+            if self.is_possible() == True: 
                 self.row += 1
                 self.print_array()
+
             self.make_puzzle2()
             
             
