@@ -1,6 +1,9 @@
 import random
 import numpy as np
 
+import sys  
+sys.setrecursionlimit(10**6)
+
 
 
 file = open('words.txt')
@@ -86,7 +89,6 @@ class Grid:
         return b 
 
 
-
     def find_new_list(self, lsos): #this gets the new list of possibilites 
         self.templs = self.lswords
         if self.empty_list(lsos) == True: 
@@ -101,7 +103,6 @@ class Grid:
                 count += 1
         #print(self.templs)
 
-                    #need to get the last letters off of the lsols
 
     def starts_with(self, string): #this get all words that start with some string
         possible = []
@@ -135,15 +136,14 @@ class Grid:
 
     def make_puzzle(self): 
         neword = self.choose_random_word(self.templs) #get random word of right length
+        print(neword)
+        print(self.row)
         self.add_to_array(str(neword), self.row) #add it to the array 
         self.row += 1
         if self.row == self.length: 
             self.make_list()
             self.print_array()
-        else: 
-
-            #self.print_array()
-            
+        else:        
             lsols = self.is_possible() #get list of column words
             lsolsc = self.clean_lsols(lsols) #clean list
             self.find_new_list(lsolsc) #get new possibilites 
@@ -158,7 +158,6 @@ class Grid:
        
 
 g1 = Grid(3)
-#g1.choose_random_word()
 g1.make_list()
 g1.make_puzzle()
 
