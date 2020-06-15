@@ -1,14 +1,14 @@
 import random
 import numpy as np
 
+
+
 file = open('words.txt')
 
 #you need to make a temporary list of the possible words using the matches thing
 
 #TODO: 
-#fix matching function (DONE)
-#make compare funciton 
-#retry previous word if none 
+#looks like your co
 
 
 class Grid:
@@ -23,15 +23,16 @@ class Grid:
         self.templs = []
 
     def make_list(self): #make a list of all the words
+        file = open('words.txt')
         for line in file: 
             word = line.strip()
             if len(word) == self.length: 
                 self.lswords.append(word)
+        self.templs = self.lswords
 
 
-    def choose_random_word(self):   #choose random word from list
-        start = random.choice(self.lswords)
-        print(start)
+    def choose_random_word(self, list):   #choose random word from list
+        start = random.choice(list)
         return start
 
     def check_match(self, letter, spot): #find words that match letter in certain spot 
@@ -59,15 +60,12 @@ class Grid:
             word = ''
             while j < self.row: 
                 word += self.array[j, i].decode('utf8')
-                print(word)
                 #checklist = self.starts_with(word)             
                 #templs.append(checklist)  #the temp list is what need
                 j+= 1
             checklist = self.starts_with(word)             
             templs.append(checklist) 
             i+= 1
-        print("this is temp")
-        print(templs)
         return templs
 
     def clean_lsols(self, lsos): #clean the new list so its only last letter in column words
@@ -77,22 +75,31 @@ class Grid:
             for w in el: 
                 first.append(w[self.row]) 
             final.append(first)
-        print("this is clean temp")
-        print(final)
+        #print(final)
         return final
 
+    def empty_list(self, lsos): 
+        b = False
+        for ls in lsos: 
+            if len(ls) == 0: 
+                b = True 
+        return b 
+
+
+
     def find_new_list(self, lsos): #this gets the new list of possibilites 
-        lists = self.lswords
-        l = len(lsos)
-        count = 0 
-        while count <= 5: 
-            for word in self.lswords: 
-                if not self.check_match2(word, lsos): 
-                    print('remove' + word)
-                    self.lswords.remove(word)
-            count +=1
-  
-        print(self.lswords)
+        self.templs = self.lswords
+        if self.empty_list(lsos) == True: 
+            self.lswords.clear()
+
+        else: 
+            count = 0 
+            while count <= 10: 
+                for word in self.templs: 
+                    if not self.check_match2(word, lsos): 
+                        self.templs.remove(word)
+                count += 1
+        #print(self.templs)
 
                     #need to get the last letters off of the lsols
 
@@ -127,44 +134,33 @@ class Grid:
     #overall fuction
 
     def make_puzzle(self): 
-        neword = self.choose_random_word() #get random word of right length
+        neword = self.choose_random_word(self.templs) #get random word of right length
         self.add_to_array(str(neword), self.row) #add it to the array 
         self.row += 1
         if self.row == self.length: 
+            self.make_list()
             self.print_array()
         else: 
 
-            self.print_array()
+            #self.print_array()
             
             lsols = self.is_possible() #get list of column words
             lsolsc = self.clean_lsols(lsols) #clean list
             self.find_new_list(lsolsc) #get new possibilites 
 
             if len(self.lswords) != 0: 
-                print(self.row)
                 self.make_puzzle()
 
             else: #start over 
                 self.make_list()
+                self.row = 0 
                 self.make_puzzle()
+       
 
-
-
-            
-        
-
-
-g1 = Grid(2)
+g1 = Grid(3)
 #g1.choose_random_word()
 g1.make_list()
 g1.make_puzzle()
 
 
-#starts_with("b")
-#starts_with2("by")
-#start_up(5)
-#add_to_array("hater", 1)
-#add_to_array("lemur", 0)
-
-#choose_random_start() 
 
