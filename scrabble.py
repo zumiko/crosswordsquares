@@ -1,18 +1,10 @@
 import random
 import numpy as np
-
 import sys  
+
 sys.setrecursionlimit(10**6)
 
-
-
 file = open('words.txt')
-
-#you need to make a temporary list of the possible words using the matches thing
-
-#TODO: 
-#looks like your co
-
 
 class Grid:
 
@@ -92,11 +84,11 @@ class Grid:
     def find_new_list(self, lsos): #this gets the new list of possibilites 
         self.templs = self.lswords
         if self.empty_list(lsos) == True: 
-            self.lswords.clear()
+            self.templs.clear()
 
         else: 
             count = 0 
-            while count <= 10: 
+            while count <= 15: 
                 for word in self.templs: 
                     if not self.check_match2(word, lsos): 
                         self.templs.remove(word)
@@ -131,15 +123,15 @@ class Grid:
         print(self.array.decode('utf8'))
         print(self.row)
 
-
-    #overall fuction
-
     def make_puzzle(self): 
+        if self.row == 0: 
+            self.make_list()
         neword = self.choose_random_word(self.templs) #get random word of right length
-        print(neword)
-        print(self.row)
+        self.templs.remove(neword)
+        print(neword) 
         self.add_to_array(str(neword), self.row) #add it to the array 
         self.row += 1
+        print(self.row)
         if self.row == self.length: 
             self.make_list()
             self.print_array()
@@ -148,18 +140,21 @@ class Grid:
             lsolsc = self.clean_lsols(lsols) #clean list
             self.find_new_list(lsolsc) #get new possibilites 
 
-            if len(self.lswords) != 0: 
+            if len(self.templs) != 0: 
                 self.make_puzzle()
 
-            else: #start over 
+            else: #backtrack a row
                 self.make_list()
-                self.row = 0 
+                self.row -= 1 
                 self.make_puzzle()
        
 
-g1 = Grid(3)
-g1.make_list()
-g1.make_puzzle()
+#TO RUN a 3X3: 
+grid = Grid(3)
+grid.make_puzzle()
+
+
+
 
 
 
