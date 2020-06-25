@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!-- This is based on DillingerLee's great template here:
+https://github.com/Team-Code/KA_Offline -->
+<html> 
+ <head>
+    <title>Processing.JS inside Webpages: Template</title> 
+</head>
+ <body>
+    <p align="center"> 
+    <!--This draws the Canvas on the webpage -->
+      <canvas id="mycanvas"></canvas> 
+    </p>
+ </body>
+ 
+ <!-- Run all the JavaScript stuff -->
+ <!-- Include the processing.js library -->
+
+ <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
+ 
+ <script>
+    var sketchProc = function(processingInstance) {
+     with (processingInstance) {
+        size(400, 400); 
+        frameRate(30);
+        
+        // ProgramCodeGoesHere
+        
+var numCols = 4;
+var numRows = 4;
+var tileOn = null;
+
+
+var tiles = [];
+
+var checkWin = function(){
+    var won = true;
+    for (var i in tiles){
+        if(this.label === ""){
+            won = false;}
+    }
+    if(won === true){
+        println("you win");
+    }
+};
+
+var Tile = function(x, y, num){
+    this.x = x;
+    this.y = y;
+    this.size = width/numCols;
+    this.label = "";
+    this.num = num;
+    
+};
+
+Tile.prototype.draw = function() {
+    if (this.num === tileOn) {
+        this.color = color(245, 120, 137);
+    } else {
+        this.color = color(255, 255, 255);
+    }
+    
+    fill(this.color);
+    strokeWeight(5);
+    rect(this.x, this.y, this.size, this.size, 0);
+    textSize(80);
+    textAlign(CENTER, CENTER);
+    fill(0, 0, 0);
+    text(this.label, this.x+this.size/2, this.y+this.size/2);
+};
+
+Tile.prototype.moveRight = function() {
+    tileOn++; 
+};
+
+Tile.prototype.onClick = function() {
+    // If the tile is not empty, exit the function
+    this.label = key;
+
+};
+
+Tile.prototype.highlight = function() {
+    if (tileOn === this.num)
+        {this.color = color(245, 120, 137);}
+
+
+};
+
+
+Tile.prototype.keyPressed = function() {
+    this.label = key;
+    tileOn = this.num;
+};
+
+Tile.prototype.handleMouseClick = function(x, y) {
+    // Check for mouse clicks inside the tile
+    if (x >= this.x && x <= this.x + this.size&&
+    y >= this.y && y <= this.y + this.size) {
+        tileOn = this.num;
+    }
+};
+
+Tile.prototype.handleMouseOver = function(x, y) {
+    // Check for mouse above tile
+    if (x >= this.x && x <= this.x + this.size&&
+    y >= this.y && y <= this.y + this.size) {
+        this.keyPressed();
+        this.isSelected();
+    
+    }
+};
+var count = 0;
+for (var i = 0; i < numCols; i++) {
+    for (var j = 0; j < numRows; j++) {
+        tiles.push(new Tile(i * (width/numCols-1), j * (height/numRows-1), count));
+        count++;
+    
+    }
+}
+
+var drawTiles = function() {
+    for (var i in tiles) {
+        tiles[i].draw();
+    }
+};
+
+mouseReleased = function() {
+    for (var i in tiles) {
+        tiles[i].handleMouseClick(mouseX, mouseY);
+    }
+};
+
+keyReleased = function() {
+    for (var i in tiles) {
+        tiles[i].handleMouseOver(mouseX, mouseY);
+        
+    }
+};
+
+//add this later to move around
+keyPressed = function() {
+    if (keyCode === 39){
+        tiles.moveRight();
+        
+    }
+    if (keyCode === 37){
+        tiles.moveLeft();
+    }
+    if (keyCode === 38){
+        tiles.moveUp();
+    }
+    if (keyCode === 40){
+        tiles.moveDown();
+    }
+};
+
+draw = function() {
+    background(143, 143, 143);
+    drawTiles();
+    //checkWin();
+};
+    }};
+
+    // Get the canvas that Processing-js will use
+    var canvas = document.getElementById("mycanvas"); 
+    // Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
+    var processingInstance = new Processing(canvas, sketchProc); 
+ </script>
+
+</html>
