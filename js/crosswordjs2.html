@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<!-- i found this at:
-http://stackoverflow.com/questions/25341597/how-can-khan-academy-computer-programs-be-run-offline-or-on-my-own-website
-all credet to them-->
 <!--legal stuff VVV-->
 <!--This work, "KA P.JS", is a derivative of "http://stackoverflow.com/questions/25341597/how-can-khan-academy-computer-programs-be-run-offline-or-on-my-own-website " by Robert Tupelo-Schneck(http://stackoverflow.com/users/394431/robert-tupelo-schneck), used under CC BY. "KA P.JS" is by michael basaj(https://www.khanacademy.org/profile/michaelbasaj/).-->
 <html>
@@ -38,7 +35,7 @@ all credet to them-->
             with (processing) {
                 
                 
-                // INSERT YOUR KHAN ACADEMY PROGRAM HERE
+                // This is the stuff below here that I wrote
                 var numCols = 4;
 var numRows = 4;
 var tileOn = null;
@@ -186,22 +183,6 @@ keyReleased = function() {
     for (var i in tiles) {
         tiles[i].handleMouseOver(mouseX, mouseY);
         
-    }
-};
-
-//add this later to move around
-keyPressed = function() {
-    if (keyCode === 39){
-        tiles.moveRight();
-    }
-    if (keyCode === 37){
-        tiles.moveLeft();
-    }
-    if (keyCode === 38){
-        tiles.moveUp();
-    }
-    if (keyCode === 40){
-        tiles.moveDown();
     }
 };
 

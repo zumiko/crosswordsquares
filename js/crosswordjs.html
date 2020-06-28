@@ -23,142 +23,186 @@ https://github.com/Team-Code/KA_Offline -->
         size(400, 400); 
         frameRate(30);
         
-        // ProgramCodeGoesHere
+        // Below here is my code
         
-var numCols = 4;
-var numRows = 4;
-var tileOn = null;
 
-
-var tiles = [];
-
-var checkWin = function(){
-    var won = true;
-    for (var i in tiles){
-        if(this.label === ""){
-            won = false;}
-    }
-    if(won === true){
-        println("you win");
-    }
-};
-
-var Tile = function(x, y, num){
-    this.x = x;
-    this.y = y;
-    this.size = width/numCols;
-    this.label = "";
-    this.num = num;
-    
-};
-
-Tile.prototype.draw = function() {
-    if (this.num === tileOn) {
-        this.color = color(245, 120, 137);
-    } else {
-        this.color = color(255, 255, 255);
-    }
-    
-    fill(this.color);
-    strokeWeight(5);
-    rect(this.x, this.y, this.size, this.size, 0);
-    textSize(80);
-    textAlign(CENTER, CENTER);
-    fill(0, 0, 0);
-    text(this.label, this.x+this.size/2, this.y+this.size/2);
-};
-
-Tile.prototype.moveRight = function() {
-    tileOn++; 
-};
-
-Tile.prototype.onClick = function() {
-    // If the tile is not empty, exit the function
-    this.label = key;
-
-};
-
-Tile.prototype.highlight = function() {
-    if (tileOn === this.num)
-        {this.color = color(245, 120, 137);}
-
-
-};
-
-
-Tile.prototype.keyPressed = function() {
-    this.label = key;
-    tileOn = this.num;
-};
-
-Tile.prototype.handleMouseClick = function(x, y) {
-    // Check for mouse clicks inside the tile
-    if (x >= this.x && x <= this.x + this.size&&
-    y >= this.y && y <= this.y + this.size) {
-        tileOn = this.num;
-    }
-};
-
-Tile.prototype.handleMouseOver = function(x, y) {
-    // Check for mouse above tile
-    if (x >= this.x && x <= this.x + this.size&&
-    y >= this.y && y <= this.y + this.size) {
-        this.keyPressed();
-        this.isSelected();
-    
-    }
-};
-var count = 0;
-for (var i = 0; i < numCols; i++) {
-    for (var j = 0; j < numRows; j++) {
-        tiles.push(new Tile(i * (width/numCols-1), j * (height/numRows-1), count));
-        count++;
-    
-    }
-}
-
-var drawTiles = function() {
-    for (var i in tiles) {
-        tiles[i].draw();
-    }
-};
-
-mouseReleased = function() {
-    for (var i in tiles) {
-        tiles[i].handleMouseClick(mouseX, mouseY);
-    }
-};
-
-keyReleased = function() {
-    for (var i in tiles) {
-        tiles[i].handleMouseOver(mouseX, mouseY);
+        var numCols = 4;
+        var numRows = 4;
+        var tileOn = null;
+        var hasWon = false;
         
-    }
-};
-
-//add this later to move around
-keyPressed = function() {
-    if (keyCode === 39){
-        tiles.moveRight();
+        var tiles = [];
         
-    }
-    if (keyCode === 37){
-        tiles.moveLeft();
-    }
-    if (keyCode === 38){
-        tiles.moveUp();
-    }
-    if (keyCode === 40){
-        tiles.moveDown();
-    }
-};
-
-draw = function() {
-    background(143, 143, 143);
-    drawTiles();
-    //checkWin();
-};
-    }};
+        var checkWin = function(){
+            var score = 0; 
+            var i = 0;
+            for (i = 0; i < tiles.length; i++){
+                if(tiles[i].correct === true){
+                    score ++;
+                }
+            }
+            if(score === numRows*numCols){
+                hasWon = true;
+                for (i = 0; i < tiles.length; i++){
+                    var rnum = random(0, 6); 
+                    tiles[i].color = color(87, 240, 212);
+                    tiles[i].label = "!";
+        
+                }
+                
+            }
+        
+        };
+        
+        var replay = function(){
+            var score = 0; 
+            var i = 0;
+            hasWon = false;
+            for (i = 0; i < tiles.length; i++){
+                    tiles[i].color = color(255, 255, 255);
+                    tiles[i].label = "";
+                    tiles[i].correct = false;
+        
+                }
+        
+        };
+        
+        var Tile = function(x, y, num, letter){
+            this.x = x;
+            this.y = y;
+            this.size = width/numCols;
+            this.label = "";
+            this.num = num;
+            this.letter = letter; 
+            this.correct = false;
+            this.color = color(255, 255, 255);
+            
+        };
+        
+        Tile.prototype.draw = function() {
+            if (hasWon === false){
+                if (this.num === tileOn) {
+                    this.color = color(245, 120, 137);
+                }
+                else{
+                    this.color = color(255, 255, 255);
+                }
+            
+            }
+            
+            fill(this.color);
+            strokeWeight(5);
+            rect(this.x, this.y, this.size, this.size, 0);
+            textSize(80);
+            textAlign(CENTER, CENTER);
+            fill(0, 0, 0);
+            text(this.label, this.x+this.size/2, this.y+this.size/2);
+        };
+        
+        Tile.prototype.moveRight = function() {
+            tileOn++; 
+        };
+        
+        
+        Tile.prototype.keyPressed = function() {
+            this.label = key;
+            tileOn = this.num;
+            this.checkRight();
+        };
+        
+        Tile.prototype.checkRight = function() {
+            if (this.letter === String(key)){
+                this.correct = true;
+                checkWin();
+            }
+            else {
+                this.correct = false;
+            }
+            
+            
+            
+        };
+        
+        Tile.prototype.handleMouseClick = function(x, y) {
+            // Check for mouse clicks inside the tile
+            if (x >= this.x && x <= this.x + this.size&&
+            y >= this.y && y <= this.y + this.size) {
+                tileOn = this.num;
+            }
+        };
+        
+        Tile.prototype.handleMouseOver = function(x, y) {
+            // Check for mouse above tile
+            if (x >= this.x && x <= this.x + this.size&&
+            y >= this.y && y <= this.y + this.size) {
+                this.keyPressed();
+            
+            }
+        };
+        
+        var letters = ['p', 'l', 'a', 't', 'l', 'o', 'n', 'e', 'e', 'p', 'e', 'e', 'd', 'e', 'w', 's'];
+        var count = 0;
+        for (var i = 0; i < numCols; i++) {
+            for (var j = 0; j < numRows; j++) {
+                tiles.push(new Tile(i * (width/numCols-1), j * (height/numRows-1), count, letters[count]));
+                count++;
+            
+            }
+        }
+        
+        var drawTiles = function() {
+            for (var i in tiles) {
+                tiles[i].draw();
+            }
+        };
+        
+        mouseReleased = function() {
+            if(hasWon === true){ 
+                if (mouseX >= 150 && mouseX <= 150 + 105 && mouseY >= 262 && mouseY <= 262 + 34) {
+                    replay();
+                    }
+                }
+            
+            for (var i in tiles) {
+                tiles[i].handleMouseClick(mouseX, mouseY);
+                
+            }
+        };
+        
+        keyReleased = function() {
+            for (var i in tiles) {
+                tiles[i].handleMouseOver(mouseX, mouseY);
+                
+            }
+        };
+        
+        //add this later to move around
+        //keyPressed = function() {
+            //if (keyCode === 39){
+                //tiles.moveRight();
+           // }
+        //};
+        
+        
+        draw = function() {
+            background(143, 143, 143);
+            drawTiles();
+            if (hasWon === true){
+                //win box 
+                fill(235, 164, 227);
+                rect(80, 150, 240, 100);
+                fill(255, 255, 255);
+                textSize(50);
+                text("you win!!", 200,198);
+                
+                //replay button
+                fill(235, 164, 227);
+                rect(149, 262, 105, 34);
+                fill(255, 255, 255);
+                textSize(20);
+                text("replay", 204,278);
+            }
+        };
 
     // Get the canvas that Processing-js will use
     var canvas = document.getElementById("mycanvas"); 
