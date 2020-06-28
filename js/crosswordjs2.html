@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!-- i found this at:
+http://stackoverflow.com/questions/25341597/how-can-khan-academy-computer-programs-be-run-offline-or-on-my-own-website
+all credet to them-->
+<!--legal stuff VVV-->
+<!--This work, "KA P.JS", is a derivative of "http://stackoverflow.com/questions/25341597/how-can-khan-academy-computer-programs-be-run-offline-or-on-my-own-website " by Robert Tupelo-Schneck(http://stackoverflow.com/users/394431/robert-tupelo-schneck), used under CC BY. "KA P.JS" is by michael basaj(https://www.khanacademy.org/profile/michaelbasaj/).-->
+<html>
+<head>
+    <title>KA JavaScript in HTML(working)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js"></script>
+</head>
+<body>
+    <h1> Across
+        <ol style="font-size:18px">
+          <li>begged for</li>
+          <li>walk, as a deer</li>
+          <li>to make again</li>
+          <li>shirt, casually</li>
+        </ol>   
+    </h1>
+    <h1> Down
+        <ol style="font-size:18px">
+          <li>a plot of land</li>
+          <li>by oneself</li>
+          <li>sword in fencing</li>
+          <li>like sweat on lashes</li>
+          
+        </ol>   
+    </h1>
+    <canvas id="canvas"></canvas>
+    <script>
+        var canvas = document.getElementById("canvas");
+        var processing = new Processing(canvas, function(processing) {
+            processing.size(400, 400);
+            processing.background(0xFFF);
+
+ 
+            with (processing) {
+                
+                
+                // INSERT YOUR KHAN ACADEMY PROGRAM HERE
+                var numCols = 4;
+var numRows = 4;
+var tileOn = null;
+var hasWon = false;
+
+var tiles = [];
+
+var checkWin = function(){
+    var score = 0; 
+    var i = 0;
+    for (i = 0; i < tiles.length; i++){
+        if(tiles[i].correct === true){
+            score ++;
+        }
+    }
+    if(score === numRows*numCols){
+        hasWon = true;
+        for (i = 0; i < tiles.length; i++){
+            var rnum = random(0, 6); 
+            tiles[i].color = color(87, 240, 212);
+            tiles[i].label = "!";
+
+        }
+        
+    }
+
+};
+
+var replay = function(){
+    var score = 0; 
+    var i = 0;
+    hasWon = false;
+    for (i = 0; i < tiles.length; i++){
+            tiles[i].color = color(255, 255, 255);
+            tiles[i].label = "";
+            tiles[i].correct = false;
+
+        }
+
+};
+
+var Tile = function(x, y, num, letter){
+    this.x = x;
+    this.y = y;
+    this.size = width/numCols;
+    this.label = "";
+    this.num = num;
+    this.letter = letter; 
+    this.correct = false;
+    this.color = color(255, 255, 255);
+    
+};
+
+Tile.prototype.draw = function() {
+    if (hasWon === false){
+        if (this.num === tileOn) {
+            this.color = color(245, 120, 137);
+        }
+        else{
+            this.color = color(255, 255, 255);
+        }
+    
+    }
+    
+    fill(this.color);
+    strokeWeight(5);
+    rect(this.x, this.y, this.size, this.size, 0);
+    textSize(80);
+    textAlign(CENTER, CENTER);
+    fill(0, 0, 0);
+    text(this.label, this.x+this.size/2, this.y+this.size/2);
+};
+
+Tile.prototype.moveRight = function() {
+    tileOn++; 
+};
+
+
+Tile.prototype.keyPressed = function() {
+    this.label = key;
+    tileOn = this.num;
+    this.checkRight();
+};
+
+Tile.prototype.checkRight = function() {
+    if (this.letter === String(key)){
+        this.correct = true;
+        checkWin();
+    }
+    else {
+        this.correct = false;
+    }
+    
+    
+    
+};
+
+Tile.prototype.handleMouseClick = function(x, y) {
+    // Check for mouse clicks inside the tile
+    if (x >= this.x && x <= this.x + this.size&&
+    y >= this.y && y <= this.y + this.size) {
+        tileOn = this.num;
+    }
+};
+
+Tile.prototype.handleMouseOver = function(x, y) {
+    // Check for mouse above tile
+    if (x >= this.x && x <= this.x + this.size&&
+    y >= this.y && y <= this.y + this.size) {
+        this.keyPressed();
+    
+    }
+};
+
+var letters = ['p', 'l', 'a', 't', 'l', 'o', 'n', 'e', 'e', 'p', 'e', 'e', 'd', 'e', 'w', 's'];
+var count = 0;
+for (var i = 0; i < numCols; i++) {
+    for (var j = 0; j < numRows; j++) {
+        tiles.push(new Tile(i * (width/numCols-1), j * (height/numRows-1), count, letters[count]));
+        count++;
+    
+    }
+}
+
+var drawTiles = function() {
+    for (var i in tiles) {
+        tiles[i].draw();
+    }
+};
+
+mouseReleased = function() {
+    if(hasWon === true){ 
+        if (mouseX >= 150 && mouseX <= 150 + 105 && mouseY >= 262 && mouseY <= 262 + 34) {
+            replay();
+            }
+        }
+    
+    for (var i in tiles) {
+        tiles[i].handleMouseClick(mouseX, mouseY);
+        
+    }
+};
+
+keyReleased = function() {
+    for (var i in tiles) {
+        tiles[i].handleMouseOver(mouseX, mouseY);
+        
+    }
+};
+
+//add this later to move around
+keyPressed = function() {
+    if (keyCode === 39){
+        tiles.moveRight();
+    }
+    if (keyCode === 37){
+        tiles.moveLeft();
+    }
+    if (keyCode === 38){
+        tiles.moveUp();
+    }
+    if (keyCode === 40){
+        tiles.moveDown();
+    }
+};
+
+
+draw = function() {
+    background(143, 143, 143);
+    drawTiles();
+    if (hasWon === true){
+        //win box 
+        fill(235, 164, 227);
+        rect(80, 150, 240, 100);
+        fill(255, 255, 255);
+        textSize(50);
+        text("you win!!", 200,198);
+        
+        //replay button
+        fill(235, 164, 227);
+        rect(149, 262, 105, 34);
+        fill(255, 255, 255);
+        textSize(20);
+        text("replay", 204,278);
+    }
+};
+                
+                
+            }
+            if (typeof draw !== 'undefined') processing.draw = draw;
+        });
+    </script>
+</body>
+</html>
